@@ -16,21 +16,16 @@ import com.mameen.egpay_task.models.CustomView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.regex.Pattern;
 
 @SuppressLint("AppCompatCustomView")
 public class CustomEditText extends EditText {
 
     final Calendar myCalendar = Calendar.getInstance();
 
-    private String required = "no";
+    private CustomView viewData;
 
-    public String getRequired() {
-        return required;
-    }
-
-    public void setRequired(String required) {
-        this.required = required;
-    }
+    private String errorMessage = "Required Filed: Enter a valid text!";
 
     public CustomEditText(Context context) {
         super(context);
@@ -39,13 +34,14 @@ public class CustomEditText extends EditText {
     public CustomEditText(final Context context, CustomView viewData) {
         super(context);
 
+        this.viewData = viewData;
+
         this.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
 
         this.setId(viewData.getId());
         this.setHint(viewData.getName());
-        this.required = viewData.getRequired();
 
         String defaultValue = viewData.getDefault_value();
         if (defaultValue != null) {
@@ -61,12 +57,13 @@ public class CustomEditText extends EditText {
             case "number":
                 this.setInputType(InputType.TYPE_CLASS_NUMBER);
                 this.setImeOptions(EditorInfo.IME_ACTION_DONE);
+                this.errorMessage = "Required Filed: Enter a valid number!";
                 break;
             case "date":
                 this.setClickable(true);
                 this.setImeOptions(EditorInfo.IME_ACTION_DONE);
                 this.setInputType(InputType.TYPE_NULL);
-                this.setFocusable(false);
+//                this.setFocusable(false);
                 this.setOnClickListener(new View.OnClickListener() {
 
                     @Override
@@ -87,6 +84,7 @@ public class CustomEditText extends EditText {
                                 myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                     }
                 });
+                this.errorMessage = "Required Filed: Enter a valid date!";
                 break;
             case "textarea":
                 this.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
@@ -99,6 +97,21 @@ public class CustomEditText extends EditText {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat);
 
         this.setText(sdf.format(myCalendar.getTime()));
+    }
+
+
+    public boolean isValidField() {
+        boolean result = true;
+
+        if (viewData.getRequired().equals("yes")) {
+            if (this.length() < 1) {
+                this.setError(errorMessage);
+                this.requestFocus();
+                result = false;
+            }
+        }
+
+        return result;
     }
 
 }

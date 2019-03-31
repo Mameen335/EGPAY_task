@@ -15,15 +15,7 @@ import com.mameen.egpay_task.models.Multiple;
 @SuppressLint("AppCompatCustomView")
 public class CustomSpinner extends Spinner {
 
-    private String required = "no";
-
-    public String getRequired() {
-        return required;
-    }
-
-    public void setRequired(String required) {
-        this.required = required;
-    }
+    private CustomView viewData;
 
     public CustomSpinner(Context context) {
         super(context);
@@ -31,6 +23,8 @@ public class CustomSpinner extends Spinner {
 
     public CustomSpinner(Context context, CustomView viewData) {
         super(context);
+
+        this.viewData = viewData;
 
         this.setLayoutParams(new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,

@@ -35,13 +35,17 @@ public class MainActivity extends AppCompatActivity {
 
     static final String TAG = MainActivity.class.getSimpleName();
 
+    private CustomView[] customViews;
+
+    private LinearLayout lyParent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
 
 
-        LinearLayout lyParent = new LinearLayout(this);
+        lyParent = new LinearLayout(this);
         lyParent.setGravity(Gravity.CENTER_HORIZONTAL);
         lyParent.setOrientation(LinearLayout.VERTICAL);
 
@@ -72,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         String jsonResponse = loadJSONFromAsset();
         // GSON and its API.
         Gson gson = new GsonBuilder().create();
-        CustomView[] customViews = gson.fromJson(jsonResponse, CustomView[].class);
+        customViews = gson.fromJson(jsonResponse, CustomView[].class);
 
         for (CustomView viewData : customViews) {
 
@@ -97,18 +101,26 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener btnSendDataListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            Log.e(TAG, "Data is: " + validateData());
         }
     };
 
     private Boolean validateData() {
 
-        boolean result = false;
+        boolean result = true;
 
+        for (int i = 0; i < customViews.length; i++) {
+            CustomView viewData = customViews[i];
+            if ((!viewData.getType().equals("select")) && viewData.getRequired().equals("yes")) {
 
+                CustomEditText et = (CustomEditText) lyParent.getChildAt(i);
 
+                if (!et.isValidField()) {
+                    result = false;
+                }
 
-
+            }
+        }
 
         return result;
     }
