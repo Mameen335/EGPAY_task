@@ -30,4 +30,20 @@ public class Multiple implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    //to display object as a string in spinner
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof Multiple){
+            Multiple m = (Multiple )obj;
+            if(m.getName().equals(name) && m.getValue()==value ) return true;
+        }
+
+        return false;
+    }
 }
