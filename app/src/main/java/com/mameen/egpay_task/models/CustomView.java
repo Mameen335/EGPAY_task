@@ -34,4 +34,60 @@ public class CustomView implements Serializable {
         @SerializedName("sort")
         @Expose
         private String sort;
+
+        public int getId() {
+                return Id;
+        }
+
+        public void setId(int id) {
+                Id = id;
+        }
+
+        public String getName() {
+                return name;
+        }
+
+        public void setName(String name) {
+                this.name = name;
+        }
+
+        public String getRequired() {
+                return required;
+        }
+
+        public void setRequired(String required) {
+                this.required = required;
+        }
+
+        public String getType() {
+                return type;
+        }
+
+        public void setType(String type) {
+                this.type = type;
+        }
+
+        public String getDefault_value() {
+                return default_value;
+        }
+
+        public void setDefault_value(String default_value) {
+                this.default_value = default_value;
+        }
+
+        public String getMultiple() {
+                return multiple;
+        }
+
+        public void setMultiple(String multiple) {
+                this.multiple = multiple;
+        }
+
+        public String getSort() {
+                return sort;
+        }
+
+        public void setSort(String sort) {
+                this.sort = sort;
+        }
 }
