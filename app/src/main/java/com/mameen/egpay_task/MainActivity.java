@@ -1,21 +1,14 @@
 package com.mameen.egpay_task;
 
-import android.app.DatePickerDialog;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,18 +18,12 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mameen.egpay_task.models.CustomView;
-import com.mameen.egpay_task.models.Multiple;
 import com.mameen.egpay_task.utils.CustomEditText;
 import com.mameen.egpay_task.utils.CustomSpinner;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
     static final String TAG = MainActivity.class.getSimpleName();
 
     private CustomView[] customViews;
-
     private LinearLayout lyParent;
+    private Button btnSendData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        Button btnSendData = new Button(MainActivity.this);
+        btnSendData = new Button(MainActivity.this);
 
         btnSendData.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -110,6 +97,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             if (validateData()) {
+                Toast.makeText(MainActivity.this, "Wait...", Toast.LENGTH_SHORT).show();
+                btnSendData.setEnabled(false);
                 String url = "http://101.amrbdr.com/";
                 StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
                     @Override
@@ -118,12 +107,16 @@ public class MainActivity extends AppCompatActivity {
                         //The String 'response' contains the server's response.
 
                         Log.e(TAG, "Response: " + response);
+                        btnSendData.setEnabled(true);
+                        Toast.makeText(MainActivity.this, "Data send successfully", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         //This code is executed if there is an error.
                         Log.e(TAG, "Error: " + error.getMessage());
+                        btnSendData.setEnabled(true);
+                        Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
                     }
                 }) {
                     protected Map<String, String> getParams() {
@@ -139,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                                         , ((CustomEditText) lyParent.getChildAt(i)).getText().toString());
                             }
                         }
-
 
                         return MyData;
                     }
