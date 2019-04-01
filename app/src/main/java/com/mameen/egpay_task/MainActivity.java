@@ -1,6 +1,7 @@
 package com.mameen.egpay_task;
 
 import android.app.DatePickerDialog;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -16,6 +17,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mameen.egpay_task.models.CustomView;
@@ -29,7 +35,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -101,7 +109,44 @@ public class MainActivity extends AppCompatActivity {
     View.OnClickListener btnSendDataListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "Data is: " + validateData());
+            if (validateData()) {
+                String url = "http://101.amrbdr.com/";
+                StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //This code is executed if the server responds, whether or not the response contains data.
+                        //The String 'response' contains the server's response.
+
+                        Log.e(TAG, "Response: " + response);
+                    }
+                }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //This code is executed if there is an error.
+                        Log.e(TAG, "Error: " + error.getMessage());
+                    }
+                }) {
+                    protected Map<String, String> getParams() {
+                        Map<String, String> MyData = new HashMap<String, String>();
+
+                        for (int i = 0; i < customViews.length; i++) {
+                            CustomView viewData = customViews[i];
+                            if (viewData.getType().equals("select")) {
+                                MyData.put(viewData.getId() + ""
+                                        , ((CustomSpinner) lyParent.getChildAt(i)).getSelectedItem().toString());
+                            } else {
+                                MyData.put(viewData.getId() + ""
+                                        , ((CustomEditText) lyParent.getChildAt(i)).getText().toString());
+                            }
+                        }
+
+
+                        return MyData;
+                    }
+                };
+
+                Volley.newRequestQueue(MainActivity.this).add(MyStringRequest);
+            }
         }
     };
 
@@ -118,10 +163,10 @@ public class MainActivity extends AppCompatActivity {
                 if (!et.isValidField()) {
                     result = false;
                 }
-
             }
         }
 
         return result;
     }
+
 }
